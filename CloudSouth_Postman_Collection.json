@@ -31,27 +31,6 @@
 			"name": "Doctors",
 			"item": [
 				{
-					"name": "Get All Doctors",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/v1/doctors",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"v1",
-								"doctors"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create Doctor",
 					"request": {
 						"method": "POST",
@@ -81,19 +60,14 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Patients",
-			"item": [
+				},
 				{
-					"name": "Get All Patients",
+					"name": "Get All Doctors",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/patients",
+							"raw": "http://localhost:8080/api/v1/doctors",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -102,12 +76,93 @@
 							"path": [
 								"api",
 								"v1",
-								"patients"
+								"doctors"
 							]
 						}
 					},
 					"response": []
 				},
+				{
+					"name": "Get Doctor by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/doctors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"doctors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Doctor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Dr. Sarah Jenkins-Smith\",\n    \"specialization\": \"Advanced Cardiology\",\n    \"department\": \"Cardiology Dept\",\n    \"qualification\": \"MD, FACC, PhD\",\n    \"experienceYears\": 15,\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/doctors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"doctors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Doctor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/doctors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"doctors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patients",
+			"item": [
 				{
 					"name": "Register Patient",
 					"request": {
@@ -134,6 +189,103 @@
 								"api",
 								"v1",
 								"patients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Patients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/patients",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"patients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/patients/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"patients",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Patient",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Johnathon\",\n    \"lastName\": \"Doe\",\n    \"email\": \"johndoe@example.com\",\n    \"phone\": \"+1987654321\",\n    \"address\": \"456 New Ave\",\n    \"dateOfBirth\": \"1990-01-01\",\n    \"bloodGroup\": \"O+\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/patients/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"patients",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Patient",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/patients/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"patients",
+								"1"
 							]
 						}
 					},

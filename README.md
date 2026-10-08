@@ -50,25 +50,111 @@ Every time you restart the server, the database will be fresh.
 
 ---
 
+## 📡 API Endpoints & Test Data
+
+The APIs have been completely structured to return a consistent JSON payload (`ApiResponse`). All API base URLs start with `http://localhost:8080/api/v1`.
+
+### 👨‍⚕️ Doctors API
+
+#### 1. Create a Doctor
+- **URL**: `POST /api/v1/doctors`
+- **Description**: Adds a new doctor to the hospital directory.
+- **JSON Payload (Test Data)**:
+```json
+{
+    "name": "Dr. Sarah Jenkins",
+    "specialization": "Cardiology",
+    "department": "Cardiology Dept",
+    "qualification": "MD, FACC",
+    "experienceYears": 12,
+    "isActive": true
+}
+```
+
+#### 2. Get All Doctors
+- **URL**: `GET /api/v1/doctors`
+- **Description**: Retrieves a list of all active doctors. You can append `?activeOnly=false` to see inactive ones.
+
+#### 3. Get Doctor by ID
+- **URL**: `GET /api/v1/doctors/1`
+- **Description**: Retrieves a single doctor's details by their ID.
+
+#### 4. Update a Doctor
+- **URL**: `PUT /api/v1/doctors/1`
+- **Description**: Updates an existing doctor's details.
+- **JSON Payload (Test Data)**:
+```json
+{
+    "name": "Dr. Sarah Jenkins-Smith",
+    "specialization": "Advanced Cardiology",
+    "department": "Cardiology Dept",
+    "qualification": "MD, FACC, PhD",
+    "experienceYears": 15,
+    "isActive": true
+}
+```
+
+#### 5. Delete a Doctor
+- **URL**: `DELETE /api/v1/doctors/1`
+- **Description**: Deletes a doctor from the system based on their ID.
+
+---
+
+### 🏥 Patients API
+
+#### 1. Register a Patient
+- **URL**: `POST /api/v1/patients`
+- **Description**: Registers a new patient. The system will automatically check if the email exists to identify returning patients for discount handling.
+- **JSON Payload (Test Data)**:
+```json
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe@example.com",
+    "phone": "+1234567890",
+    "address": "123 Main St",
+    "dateOfBirth": "1990-01-01",
+    "bloodGroup": "O+"
+}
+```
+
+#### 2. Get All Patients
+- **URL**: `GET /api/v1/patients`
+- **Description**: Retrieves a list of all registered patients.
+
+#### 3. Get Patient by ID
+- **URL**: `GET /api/v1/patients/1`
+- **Description**: Retrieves a single patient's details by their ID.
+
+#### 4. Update a Patient
+- **URL**: `PUT /api/v1/patients/1`
+- **Description**: Updates an existing patient's details.
+- **JSON Payload (Test Data)**:
+```json
+{
+    "firstName": "Johnathon",
+    "lastName": "Doe",
+    "email": "johndoe@example.com",
+    "phone": "+1987654321",
+    "address": "456 New Ave",
+    "dateOfBirth": "1990-01-01",
+    "bloodGroup": "O+"
+}
+```
+
+#### 5. Delete a Patient
+- **URL**: `DELETE /api/v1/patients/1`
+- **Description**: Deletes a patient from the system based on their ID.
+
+---
+
 ## 🧪 Testing the APIs (Postman)
 A Postman collection is included in the project repository so you can instantly test the working APIs.
 
 1. Open **Postman**.
 2. Click **Import** (top left).
 3. Select the `CloudSouth_Postman_Collection.json` file located in the root of this repository.
-4. You will see a collection named **CloudSouth API** with ready-to-run requests for:
-   - Server Health Check
-   - Creating/Viewing Doctors
-   - Registering/Viewing Patients
-
----
-
-## 📁 Features Implemented So Far (Sprint 1)
-- **Standardized API Responses**: Every API returns a consistent JSON wrapper (`ApiResponse`).
-- **Global Error Handling**: Custom `ResourceNotFoundException` and centralized error trapping.
-- **Doctor Module**: Full CRUD APIs (Create, Read, Update, Delete) to manage hospital doctors.
-- **Patient Module**: Full CRUD APIs with initial logic to identify returning patients for discount handling.
-- **CORS Configuration**: Fully configured to allow requests from frontend (React/Next.js) running on `localhost:3000`.
+4. You will see a collection named **CloudSouth API** with ready-to-run folders for all the **Doctors** and **Patients** CRUD operations exactly as listed above.
 
 ---
 
