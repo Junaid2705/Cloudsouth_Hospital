@@ -4,11 +4,9 @@ import com.cloudsouth.backend.dto.ApiResponse;
 import com.cloudsouth.backend.model.Doctor;
 import com.cloudsouth.backend.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,14 +18,32 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Doctor>>> getAllActiveDoctors() {
-        List<Doctor> doctors = doctorService.getAllActiveDoctors();
-        return ResponseEntity.ok(ApiResponse.success(doctors, "Fetched all active doctors successfully"));
+    public ResponseEntity<ApiResponse<List<Doctor>>> getAllDoctors(@RequestParam(required = false, defaultValue = "true") boolean activeOnly) {
+        List<Doctor> doctors = activeOnly ? doctorService.getAllActiveDoctors() : doctorService.getAllDoctors();
+        return ResponseEntity.ok(ApiResponse.success(doctors, "Fetched doctors successfully"));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Doctor>> getDoctorById(@PathVariable Long id) {
         Doctor doctor = doctorService.getDoctorById(id);
         return ResponseEntity.ok(ApiResponse.success(doctor, "Fetched doctor successfully"));
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<Doctor>> createDoctor(@RequestBody Doctor doctor) {
+        Doctor createdDoctor = doctorService.createDoctor(doctor);
+        return new ResponseEntity<>(ApiResponse.success(createdDoctor, "Doctor created successfully"), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Doctor>> updateDoctor(@PathVariable Long id, @RequestBody Doctor doctorDetails) {
+        Doctor updatedDoctor = doctorService.updateDoctor(id, doctorDetails);
+        return ResponseEntity.ok(ApiResponse.success(updatedDoctor, "Doctor updated successfully"));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteDoctor(@PathVariable Long id) {
+        doctorService.deleteDoctor(id);
+        return ResponseEntity.ok(ApiResponse.success(null, "Doctor deleted successfully"));
     }
 }
