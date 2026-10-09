@@ -5,7 +5,7 @@ This is the backend API for the **CloudSouth Hospitality Management System**. It
 ## 🚀 Tech Stack
 - **Framework**: Spring Boot 3.x
 - **Language**: Java 21
-- **Build Tool**: Gradle
+- **Build Tool**: Maven
 - **Database**: H2 Database (In-Memory for development & testing)
 - **Architecture**: MVC (Model-View-Controller)
 
@@ -23,16 +23,16 @@ This is the backend API for the **CloudSouth Hospitality Management System**. It
 Navigate to the root directory of the project (`cloudsouth-backend`).
 
 ### 2. Run the Application
-Use the provided Gradle Wrapper to start the Spring Boot server.
+Use the provided Maven Wrapper to start the Spring Boot server.
 
 **For Windows:**
 ```cmd
-.\gradlew.bat bootRun
+.\mvnw.cmd spring-boot:run
 ```
 
 **For Mac/Linux:**
 ```bash
-./gradlew bootRun
+./mvnw spring-boot:run
 ```
 
 The application will start on `http://localhost:8080`.
