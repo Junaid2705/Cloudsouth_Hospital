@@ -27,7 +27,20 @@ public class Doctor {
     @Column(nullable = false)
     private String department;
 
+    private Long departmentId;
+
     private String qualification;
     private Integer experienceYears;
-    private Boolean isActive;
+
+    @Builder.Default
+    private Double consultationFee = 50.00; // Standard $50 as specified in BRD
+
+    private String photoUrl;
+    private String availableDays;
+    private String availableTimeSlots;
+    private String email;
+    private String phone;
+
+    @Builder.Default
+    private Boolean isActive = true;
 }

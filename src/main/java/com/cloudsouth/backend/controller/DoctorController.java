@@ -1,13 +1,17 @@
 package com.cloudsouth.backend.controller;
 
 import com.cloudsouth.backend.dto.ApiResponse;
+import com.cloudsouth.backend.dto.DoctorAvailabilityDto;
 import com.cloudsouth.backend.model.Doctor;
+import com.cloudsouth.backend.model.DoctorSchedule;
 import com.cloudsouth.backend.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -18,9 +22,35 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Doctor>>> getAllDoctors(@RequestParam(required = false, defaultValue = "true") boolean activeOnly) {
-        List<Doctor> doctors = activeOnly ? doctorService.getAllActiveDoctors() : doctorService.getAllDoctors();
+    public ResponseEntity<ApiResponse<List<Doctor>>> getAllDoctors(
+            @RequestParam(required = false, defaultValue = "true") boolean activeOnly,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) Long departmentId) {
+
+        List<Doctor> doctors;
+        if (departmentId != null) {
+            doctors = doctorService.getDoctorsByDepartmentId(departmentId);
+        } else if (department != null && !department.trim().isEmpty()) {
+            doctors = doctorService.getDoctorsByDepartment(department.trim());
+        } else if (activeOnly) {
+            doctors = doctorService.getAllActiveDoctors();
+        } else {
+            doctors = doctorService.getAllDoctors();
+        }
+
         return ResponseEntity.ok(ApiResponse.success(doctors, "Fetched doctors successfully"));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<Doctor>>> searchDoctors(@RequestParam String query) {
+        List<Doctor> doctors = doctorService.searchDoctors(query);
+        return ResponseEntity.ok(ApiResponse.success(doctors, "Doctor search completed"));
+    }
+
+    @GetMapping("/department/{departmentName}")
+    public ResponseEntity<ApiResponse<List<Doctor>>> getDoctorsByDepartment(@PathVariable String departmentName) {
+        List<Doctor> doctors = doctorService.getDoctorsByDepartment(departmentName);
+        return ResponseEntity.ok(ApiResponse.success(doctors, "Fetched doctors by department successfully"));
     }
 
     @GetMapping("/{id}")
@@ -45,5 +75,49 @@ public class DoctorController {
     public ResponseEntity<ApiResponse<Void>> deleteDoctor(@PathVariable Long id) {
         doctorService.deleteDoctor(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Doctor deleted successfully"));
+    }
+
+    // ==========================================
+    // AVAILABILITY & SCHEDULE ENDPOINTS
+    // ==========================================
+
+    @GetMapping("/{id}/availability")
+    public ResponseEntity<ApiResponse<DoctorAvailabilityDto>> getDoctorAvailability(
+            @PathVariable Long id,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        LocalDate targetDate = (date != null) ? date : LocalDate.now();
+        DoctorAvailabilityDto availability = doctorService.getDoctorAvailability(id, targetDate);
+        return ResponseEntity.ok(ApiResponse.success(availability, "Doctor availability calculated successfully"));
+    }
+
+    @GetMapping("/{id}/schedules")
+    public ResponseEntity<ApiResponse<List<DoctorSchedule>>> getDoctorSchedules(@PathVariable Long id) {
+        List<DoctorSchedule> schedules = doctorService.getDoctorSchedules(id);
+        return ResponseEntity.ok(ApiResponse.success(schedules, "Fetched doctor schedules successfully"));
+    }
+
+    @PostMapping("/{id}/schedules")
+    public ResponseEntity<ApiResponse<DoctorSchedule>> addDoctorSchedule(
+            @PathVariable Long id,
+            @RequestBody DoctorSchedule schedule) {
+        DoctorSchedule created = doctorService.addDoctorSchedule(id, schedule);
+        return new ResponseEntity<>(ApiResponse.success(created, "Schedule added successfully"), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}/schedules/{scheduleId}")
+    public ResponseEntity<ApiResponse<DoctorSchedule>> updateDoctorSchedule(
+            @PathVariable Long id,
+            @PathVariable Long scheduleId,
+            @RequestBody DoctorSchedule schedule) {
+        DoctorSchedule updated = doctorService.updateDoctorSchedule(scheduleId, schedule);
+        return ResponseEntity.ok(ApiResponse.success(updated, "Schedule updated successfully"));
+    }
+
+    @DeleteMapping("/{id}/schedules/{scheduleId}")
+    public ResponseEntity<ApiResponse<Void>> deleteDoctorSchedule(
+            @PathVariable Long id,
+            @PathVariable Long scheduleId) {
+        doctorService.deleteDoctorSchedule(scheduleId);
+        return ResponseEntity.ok(ApiResponse.success(null, "Schedule deleted successfully"));
     }
 }
