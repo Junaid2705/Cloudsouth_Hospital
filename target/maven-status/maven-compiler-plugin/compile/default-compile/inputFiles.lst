@@ -7,6 +7,7 @@ D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\
 D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\controller\PatientController.java
 D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\dto\ApiResponse.java
 D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\dto\DoctorAvailabilityDto.java
+D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\dto\DoctorStatsDto.java
 D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\dto\TimeSlotDto.java
 D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\exception\GlobalExceptionHandler.java
 D:\Cloudsouth_Hospital\Cloudsouth_Hospital\src\main\java\com\cloudsouth\backend\exception\ResourceNotFoundException.java

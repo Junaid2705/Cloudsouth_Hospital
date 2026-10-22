@@ -2,6 +2,7 @@ package com.cloudsouth.backend.controller;
 
 import com.cloudsouth.backend.dto.ApiResponse;
 import com.cloudsouth.backend.dto.DoctorAvailabilityDto;
+import com.cloudsouth.backend.dto.DoctorStatsDto;
 import com.cloudsouth.backend.model.Doctor;
 import com.cloudsouth.backend.model.DoctorSchedule;
 import com.cloudsouth.backend.service.DoctorService;
@@ -21,24 +22,35 @@ public class DoctorController {
 
     private final DoctorService doctorService;
 
+    /**
+     * Get doctors with full filtering support matching the frontend UI:
+     * - department: "General Physician", "Leg Fracture / Orthopedic Care", etc.
+     * - day: "Monday", "Tuesday", etc.
+     * - shift: "Morning Shift", "Evening Shift", "Available Today"
+     * - query: text search (e.g. "Sharma", "Cardiology", "Trauma")
+     */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Doctor>>> getAllDoctors(
-            @RequestParam(required = false, defaultValue = "true") boolean activeOnly,
+    public ResponseEntity<ApiResponse<List<Doctor>>> getDoctors(
             @RequestParam(required = false) String department,
-            @RequestParam(required = false) Long departmentId) {
+            @RequestParam(required = false) String day,
+            @RequestParam(required = false) String shift,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false, defaultValue = "true") boolean activeOnly) {
 
-        List<Doctor> doctors;
-        if (departmentId != null) {
-            doctors = doctorService.getDoctorsByDepartmentId(departmentId);
-        } else if (department != null && !department.trim().isEmpty()) {
-            doctors = doctorService.getDoctorsByDepartment(department.trim());
-        } else if (activeOnly) {
-            doctors = doctorService.getAllActiveDoctors();
-        } else {
-            doctors = doctorService.getAllDoctors();
-        }
-
+        List<Doctor> doctors = doctorService.filterDoctors(department, day, shift, query, activeOnly);
         return ResponseEntity.ok(ApiResponse.success(doctors, "Fetched doctors successfully"));
+    }
+
+    /**
+     * Returns hospital specialist stats & department counts for the frontend header & pills:
+     * - Specialist Doctors: 85+
+     * - Hospital Beds: 1,000+
+     * - Department breakdown counts
+     */
+    @GetMapping("/stats")
+    public ResponseEntity<ApiResponse<DoctorStatsDto>> getDoctorStats() {
+        DoctorStatsDto stats = doctorService.getDoctorStats();
+        return ResponseEntity.ok(ApiResponse.success(stats, "Fetched doctor directory statistics"));
     }
 
     @GetMapping("/search")
