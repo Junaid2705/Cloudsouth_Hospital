@@ -1,168 +1,128 @@
-# CloudSouth Hospitality - Backend API
+# CloudSouth Hospitality - Backend API & Services
 
-This is the backend API for the **CloudSouth Hospitality Management System**. It is built using Spring Boot and provides RESTful APIs for managing doctors, patients, appointments, and other hospital operations.
+Comprehensive enterprise backend for **CloudSouth Hospital Management System** built with **Java 21**, **Spring Boot 3.x**, and **Spring Data JPA**.
 
-## 🚀 Tech Stack
+Implemented strictly based on **Business Requirement Document (BRD v1.0)**, **Functional Requirement Document (FRD v1.0)**, and the **Doctor & Specialist Directory UI Designs**.
+
+---
+
+## 🚀 Key Highlights & Business Capabilities
+
+- **Doctor Directory & Filtering (`FR-04`, `BR-02`)**: Single-pass multi-criteria filtering by department, available day, shift (Morning / Evening / Available Today), keyword query, minimum experience years, and pagination (`NFR-06`).
+- **Standard & Returning Patient Fee Calculation (`BR-05`, `BR-06`, `FR-11`, `FR-16`, `VR-05`)**: Standard fee $50.00, automatic 10% discount ($5.00 savings) for returning patients ($45.00 final fee).
+- **Hospital Departments (`FR-10`, `FR-11`)**: 5 core departments (*General Physician*, *Leg Fracture / Orthopedic Care*, *Brain Surgery / Neurosurgery*, *Cancer / Oncology*, *Stomach / Gastroenterology*) with dynamic doctor capacity and real-time availability.
+- **Real-Time Doctor Availability Engine (`FR-07`, `FR-13`, `BR-03`, `VR-02`)**: Dynamic calculation of 45-minute slots taking into account recurring weekly schedules, doctor leaves, past-hour blocking, and booked slots.
+- **Strict Double Booking Prevention (`BR-04`, `VR-02`)**: Guaranteed no overlapping appointments for the same doctor and slot.
+- **Slot Hold & Pre-Booking Lifecycle (`FR-12`, `BR-07`, `BR-08`)**: Temporary 15-minute slot lock during payment with confirmation and release endpoints.
+- **Schedule Overrides & Slot Blocking (`FR-09`, `BR-11`)**: Manual deactivation/blocking of specific time slots on specific dates.
+- **Multi-day Availability Calendar (`FR-07`, `FR-12`)**: Day-by-day availability status, slot counts, and leave indicators for calendar date-pickers.
+
+---
+
+## 🛠️ Tech Stack & Setup
+
+- **Language**: Java 21 (JDK 21)
 - **Framework**: Spring Boot 3.x
-- **Language**: Java 21
-- **Build Tool**: Maven
-- **Database**: H2 Database (In-Memory for development & testing)
-- **Architecture**: MVC (Model-View-Controller)
+- **Persistence**: Spring Data JPA / Hibernate
+- **Database**: H2 In-Memory Database (Embedded, zero setup)
+- **H2 Console**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console) (`jdbc:h2:mem:cloudsouthdb`, username: `sa`, password: `password`)
+- **API Base URL**: `http://localhost:8080/api/v1`
 
 ---
 
-## 🛠️ Prerequisites
-- **Java Development Kit (JDK) 21** must be installed on your system.
-- No database installation is required (the project uses an embedded H2 database that spins up automatically).
+## 📡 API Reference
 
----
-
-## ⚙️ How to Run the Application
-
-### 1. Open Terminal/Command Prompt
-Navigate to the root directory of the project (`cloudsouth-backend`).
-
-### 2. Run the Application
-Use the provided Maven Wrapper to start the Spring Boot server.
-
-**For Windows:**
-```cmd
-.\mvnw.cmd spring-boot:run
-```
-
-**For Mac/Linux:**
-```bash
-./mvnw spring-boot:run
-```
-
-The application will start on `http://localhost:8080`.
-
----
-
-## 💾 Accessing the Database (H2 Console)
-The project is configured to use a temporary in-memory database for immediate testing without any setup.
-- **URL**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
-- **JDBC URL**: `jdbc:h2:mem:cloudsouthdb`
-- **Username**: `sa`
-- **Password**: `password`
-
-Every time you restart the server, the database will be fresh.
-
----
-
-## 📡 API Endpoints & Test Data
-
-The APIs have been completely structured to return a consistent JSON payload (`ApiResponse`). All API base URLs start with `http://localhost:8080/api/v1`.
-
-### 👨‍⚕️ Doctors API
-
-#### 1. Create a Doctor
-- **URL**: `POST /api/v1/doctors`
-- **Description**: Adds a new doctor to the hospital directory.
-- **JSON Payload (Test Data)**:
+All responses follow the unified `ApiResponse<T>` envelope:
 ```json
 {
-    "name": "Dr. Sarah Jenkins",
-    "specialization": "Cardiology",
-    "department": "Cardiology Dept",
-    "qualification": "MD, FACC",
-    "experienceYears": 12,
-    "isActive": true
+  "success": true,
+  "message": "Operation description",
+  "data": { ... },
+  "timestamp": "2026-10-26T12:00:00"
 }
 ```
 
-#### 2. Get All Doctors
-- **URL**: `GET /api/v1/doctors`
-- **Description**: Retrieves a list of all active doctors. You can append `?activeOnly=false` to see inactive ones.
+---
 
-#### 3. Get Doctor by ID
-- **URL**: `GET /api/v1/doctors/1`
-- **Description**: Retrieves a single doctor's details by their ID.
+### 👨‍⚕️ 1. Doctors API (`/api/v1/doctors`)
 
-#### 4. Update a Doctor
-- **URL**: `PUT /api/v1/doctors/1`
-- **Description**: Updates an existing doctor's details.
-- **JSON Payload (Test Data)**:
-```json
-{
-    "name": "Dr. Sarah Jenkins-Smith",
-    "specialization": "Advanced Cardiology",
-    "department": "Cardiology Dept",
-    "qualification": "MD, FACC, PhD",
-    "experienceYears": 15,
-    "isActive": true
-}
-```
-
-#### 5. Delete a Doctor
-- **URL**: `DELETE /api/v1/doctors/1`
-- **Description**: Deletes a doctor from the system based on their ID.
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/doctors` | Multi-criteria search (`department`, `day`, `shift`, `query`, `minExperience`, `maxFee`, `activeOnly`) |
+| `GET` | `/api/v1/doctors/page` | Paginated and sorted doctor search (`page`, `size`, `sortBy`, `sortDirection`) |
+| `GET` | `/api/v1/doctors/stats` | Header stats (`85+ Specialists`, `1,000+ Beds`, department counts) |
+| `GET` | `/api/v1/doctors/specializations` | All distinct specializations across active doctors |
+| `GET` | `/api/v1/doctors/departments` | All distinct doctor departments |
+| `GET` | `/api/v1/doctors/experience?minYears=15` | Doctors with 15+ years experience |
+| `GET` | `/api/v1/doctors/available?date=YYYY-MM-DD` | Doctors available on a specific date |
+| `GET` | `/api/v1/doctors/{id}` | Get doctor details by ID |
+| `GET` | `/api/v1/doctors/{id}/fee?isReturning=true` | Fee & discount calculation ($50 vs $45) |
+| `POST` | `/api/v1/doctors` | Add a new doctor (`name`, `department`, `specialization` mandatory) |
+| `PUT` | `/api/v1/doctors/{id}` | Update doctor profile |
+| `PATCH`| `/api/v1/doctors/{id}/status?active=true` | Activate or deactivate a doctor |
+| `DELETE`| `/api/v1/doctors/{id}` | Soft delete doctor (set inactive) |
 
 ---
 
-### 🏥 Patients API
+### 🏥 2. Departments API (`/api/v1/departments`)
 
-#### 1. Register a Patient
-- **URL**: `POST /api/v1/patients`
-- **Description**: Registers a new patient. The system will automatically check if the email exists to identify returning patients for discount handling.
-- **JSON Payload (Test Data)**:
-```json
-{
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "johndoe@example.com",
-    "phone": "+1234567890",
-    "address": "123 Main St",
-    "dateOfBirth": "1990-01-01",
-    "bloodGroup": "O+"
-}
-```
-
-#### 2. Get All Patients
-- **URL**: `GET /api/v1/patients`
-- **Description**: Retrieves a list of all registered patients.
-
-#### 3. Get Patient by ID
-- **URL**: `GET /api/v1/patients/1`
-- **Description**: Retrieves a single patient's details by their ID.
-
-#### 4. Update a Patient
-- **URL**: `PUT /api/v1/patients/1`
-- **Description**: Updates an existing patient's details.
-- **JSON Payload (Test Data)**:
-```json
-{
-    "firstName": "Johnathon",
-    "lastName": "Doe",
-    "email": "johndoe@example.com",
-    "phone": "+1987654321",
-    "address": "456 New Ave",
-    "dateOfBirth": "1990-01-01",
-    "bloodGroup": "O+"
-}
-```
-
-#### 5. Delete a Patient
-- **URL**: `DELETE /api/v1/patients/1`
-- **Description**: Deletes a patient from the system based on their ID.
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/departments` | List all departments (`activeOnly=true/false`) |
+| `GET` | `/api/v1/departments/summary` | Department summaries with active doctor counts and target capacity |
+| `GET` | `/api/v1/departments/stats` | Hospital overview: 5 departments, 85 capacity, active counts |
+| `GET` | `/api/v1/departments/code/{code}` | Lookup department by code (e.g. `ORTHO`, `GEN`, `NEURO`) |
+| `GET` | `/api/v1/departments/{id}` | Get department by ID |
+| `GET` | `/api/v1/departments/{id}/doctors` | All doctors belonging to a department |
+| `GET` | `/api/v1/departments/{id}/doctors/search?query=...` | Search doctors inside a department |
+| `GET` | `/api/v1/departments/{id}/specializations` | Unique specializations in this department |
+| `GET` | `/api/v1/departments/{id}/availability?date=...` | Department-wide doctor availability and open slots on date |
+| `POST` | `/api/v1/departments` | Create new department |
+| `PUT` | `/api/v1/departments/{id}` | Update department details |
+| `PATCH`| `/api/v1/departments/{id}/status?active=true` | Toggle department active status |
+| `DELETE`| `/api/v1/departments/{id}` | Deactivate department |
 
 ---
 
-## 🧪 Testing the APIs (Postman)
-A Postman collection is included in the project repository so you can instantly test the working APIs.
+### ⏱️ 3. Availability & Scheduling API (`/api/v1/availability` & `/api/v1/doctors/{id}/...`)
 
-1. Open **Postman**.
-2. Click **Import** (top left).
-3. Select the `CloudSouth_Postman_Collection.json` file located in the root of this repository.
-4. You will see a collection named **CloudSouth API** with ready-to-run folders for all the **Doctors** and **Patients** CRUD operations exactly as listed above.
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/doctors/{id}/availability?date=YYYY-MM-DD` | Real-time slots for doctor on date (45-min intervals) |
+| `GET` | `/api/v1/doctors/{id}/calendar?startDate=...&endDate=...` | 30-day availability calendar for date picker UI |
+| `GET` | `/api/v1/doctors/{id}/next-available` | Earliest open slot in the next 30 days |
+| `POST` | `/api/v1/doctors/{id}/check-slot` | Check if specific slot is available (`BR-04` double-booking check) |
+| `POST` | `/api/v1/doctors/{id}/pre-book-slot?holdMinutes=15` | Temporarily hold slot during pre-booking/payment flow (`FR-12`) |
+| `POST` | `/api/v1/doctors/{id}/book-slot` | Directly reserve/book a confirmed slot |
+| `POST` | `/api/v1/doctors/slots/{slotId}/confirm` | Confirm a held slot upon successful payment |
+| `POST` | `/api/v1/doctors/slots/{slotId}/release` | Release/cancel a held or booked slot |
+| `POST` | `/api/v1/doctors/{id}/block-slot` | Manually block doctor slot for meeting/surgery (`FR-09`) |
+| `POST` | `/api/v1/doctors/{id}/unblock-slot` | Unblock a previously blocked slot |
+| `GET` | `/api/v1/doctors/{id}/blocked-slots?date=...` | List blocked slots on a date |
+| `GET` | `/api/v1/availability/doctors?date=...` | Unified endpoint: find all available doctors on date |
+| `GET` | `/api/v1/availability/departments/{id}?date=...` | Unified endpoint: check department availability |
 
 ---
 
-## 📦 Pushing to GitHub
-To push this code to a new GitHub repository, run the following commands in the terminal:
+### 📅 4. Doctor Weekly Schedules & Leaves (`FR-09`)
 
-```bash
-git branch -M main
-git remote add origin <YOUR_GITHUB_REPO_URL>
-git push -u origin main
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/doctors/{id}/schedules` | Weekly recurring schedule rules |
+| `POST` | `/api/v1/doctors/{id}/schedules` | Add a schedule rule (`dayOfWeek`, `startTime`, `endTime`) |
+| `POST` | `/api/v1/doctors/{id}/schedules/bulk` | Bulk save entire weekly schedule (Mon-Sun) |
+| `PUT` | `/api/v1/doctors/{id}/schedules/{scheduleId}` | Update schedule rule |
+| `DELETE`| `/api/v1/doctors/{id}/schedules/{scheduleId}` | Remove schedule rule |
+| `GET` | `/api/v1/doctors/{id}/leaves` | All leaves for a doctor |
+| `POST` | `/api/v1/doctors/{id}/leaves` | Schedule single-date leave |
+| `POST` | `/api/v1/doctors/{id}/leaves/range` | Schedule date range leave (`startDate` to `endDate`) |
+| `DELETE`| `/api/v1/doctors/{id}/leaves/{leaveId}` | Cancel doctor leave |
+| `GET` | `/api/v1/doctors/leaves?date=...` | Hospital-wide view of all doctors on leave |
+
+---
+
+## 🧪 Postman Collection
+
+An updated Postman test collection with sample payloads for all endpoints is available in the root folder:
+- **File**: [CloudSouth_Postman_Collection.json](file:///d:/Cloudsouth_Hospital/Cloudsouth_Hospital/CloudSouth_Postman_Collection.json)
+- Import it into Postman to instantly test all endpoints.

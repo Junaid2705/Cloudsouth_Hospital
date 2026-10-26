@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimeSlotDto {
-    private String slot; // e.g. "09:00 - 10:00"
+    private String slot; // e.g. "09:00 - 09:45"
+    private String displayTime; // e.g. "09:00 AM" (matching frontend chips)
     private String startTime; // "09:00"
-    private String endTime; // "10:00"
+    private String endTime; // "09:45"
     private boolean isAvailable;
-    private String status; // "AVAILABLE" or "BOOKED"
+    private String status; // "AVAILABLE", "BOOKED", "HELD", "BLOCKED", "UNAVAILABLE"
 }

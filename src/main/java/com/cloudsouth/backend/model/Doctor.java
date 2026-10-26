@@ -10,14 +10,21 @@ import lombok.NoArgsConstructor;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Entity
-@Table(name = "doctors")
+@Table(name = "doctors", indexes = {
+    @Index(name = "idx_doctor_department", columnList = "department"),
+    @Index(name = "idx_doctor_dept_id", columnList = "departmentId"),
+    @Index(name = "idx_doctor_active", columnList = "isActive")
+})
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Doctor {
+
+    private static final Pattern COMMA_SEPARATOR = Pattern.compile("\\s*,\\s*");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,24 +40,22 @@ public class Doctor {
     private String department;
 
     private Long departmentId;
-
     private String qualification;
     private Integer experienceYears;
 
     @Builder.Default
-    private Double consultationFee = 50.00; // Standard $50 as specified in BRD
+    private Double consultationFee = 50.00;
 
     @Builder.Default
-    private Double returningFee = 45.00; // Standard $45 (10% returning patient discount)
+    private Double returningFee = 45.00;
 
     private String photoUrl;
     private String availableDays;
-    
-    private String timings; // e.g. "09:00 AM - 01:00 PM (Morning Shift)"
-    private String timingShift; // e.g. "Morning Shift" or "Evening Shift"
+    private String timings;
+    private String timingShift;
 
     @Column(length = 1000)
-    private String availableTimeSlots; // Comma-separated: "09:00 AM, 09:45 AM, 10:30 AM, 11:15 AM, 12:00 PM"
+    private String availableTimeSlots;
 
     private String email;
     private String phone;
@@ -60,12 +65,9 @@ public class Doctor {
 
     @JsonProperty("timeSlots")
     public List<String> getTimeSlotsList() {
-        if (availableTimeSlots == null || availableTimeSlots.trim().isEmpty()) {
+        if (availableTimeSlots == null || availableTimeSlots.isBlank()) {
             return Collections.emptyList();
         }
-        return Arrays.stream(availableTimeSlots.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .toList();
+        return Arrays.asList(COMMA_SEPARATOR.split(availableTimeSlots.trim()));
     }
 }

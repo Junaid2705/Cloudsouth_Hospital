@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "doctor_schedules")
+@Table(name = "doctor_schedules", indexes = {
+    @Index(name = "idx_schedule_lookup", columnList = "doctorId, dayOfWeek, isActive")
+})
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,16 +24,16 @@ public class DoctorSchedule {
     private Long doctorId;
 
     @Column(nullable = false)
-    private String dayOfWeek; // e.g., "MONDAY", "TUESDAY", etc.
+    private String dayOfWeek;
 
     @Column(nullable = false)
-    private String startTime; // e.g., "09:00"
+    private String startTime;
 
     @Column(nullable = false)
-    private String endTime; // e.g., "17:00"
+    private String endTime;
 
     @Builder.Default
-    private Integer slotDurationMinutes = 60; // default 60 min slots
+    private Integer slotDurationMinutes = 45;
 
     @Builder.Default
     private Boolean isActive = true;

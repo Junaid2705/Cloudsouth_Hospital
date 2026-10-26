@@ -24,23 +24,19 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
-        // Business Rule from PDF: Check if returning patient based on email (simplified)
-        if (patientRepository.findByEmail(patient.getEmail()).isPresent()) {
-            patient.setIsReturningPatient(true);
-        } else {
-            patient.setIsReturningPatient(false);
-        }
+        boolean isReturning = patient.getEmail() != null && patientRepository.findByEmail(patient.getEmail()).isPresent();
+        patient.setIsReturningPatient(isReturning);
         return patientRepository.save(patient);
     }
 
-    public Patient updatePatient(Long id, Patient patientDetails) {
+    public Patient updatePatient(Long id, Patient details) {
         Patient patient = getPatientById(id);
-        patient.setFirstName(patientDetails.getFirstName());
-        patient.setLastName(patientDetails.getLastName());
-        patient.setPhone(patientDetails.getPhone());
-        patient.setAddress(patientDetails.getAddress());
-        patient.setDateOfBirth(patientDetails.getDateOfBirth());
-        patient.setBloodGroup(patientDetails.getBloodGroup());
+        patient.setFirstName(details.getFirstName());
+        patient.setLastName(details.getLastName());
+        patient.setPhone(details.getPhone());
+        patient.setAddress(details.getAddress());
+        patient.setDateOfBirth(details.getDateOfBirth());
+        patient.setBloodGroup(details.getBloodGroup());
         return patientRepository.save(patient);
     }
 

@@ -11,21 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>cloudsouth-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>cloudsouth-backend</name>
-	<description/>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<description>CloudSouth Hospital Backend API Service</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
